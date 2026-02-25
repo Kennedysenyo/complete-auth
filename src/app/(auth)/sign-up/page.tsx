@@ -1,4 +1,4 @@
-import { AuthForm } from "@/components/auth-form";
+import { AuthForm } from "@/auth/nextjs/components/auth-form";
 
 export default function SignUpPage() {
   return (
