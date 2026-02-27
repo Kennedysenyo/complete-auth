@@ -1,4 +1,4 @@
-"use client";
+"use server";
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -6,6 +6,7 @@ import { signInSchema, signUpSchema } from "./schema";
 import { db } from "@/db/db";
 import { UserTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { hashPassword } from "../core/passwordHasher";
 
 export async function SignIn(unsafeData: z.Infer<typeof signInSchema>) {
   const { success, data } = signInSchema.safeParse(unsafeData);
@@ -26,7 +27,10 @@ export async function SignUp(unsafeData: z.infer<typeof signUpSchema>) {
     where: eq(UserTable.email, data.email),
   });
 
-  if (existingUser != null) return "Account already exists for this email";
+  if (existingUser !== null) return "Account already exists for this email";
+
+  const hashedPassword = hashPassword(data.password, "salt");
+  console.log(hashPassword);
 
   redirect("/");
 }

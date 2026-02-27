@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export default function Home() {
-  // const fullUser = null;
-  const fullUser = { id: "", name: "Ken", role: "user" };
+  const fullUser = null;
+  // const fullUser = { id: "", name: "Ken", role: "user" };
   return (
     <div>
       {fullUser == null ? (

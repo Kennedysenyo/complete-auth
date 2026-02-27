@@ -1,4 +1,4 @@
-import { AuthForm } from "@/auth/nextjs/components/auth-form";
+import { AuthForm } from "@/auth/nextjs/components/SignInForm";
 
 export default function SingInPage() {
   return (

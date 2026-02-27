@@ -1,9 +1,9 @@
-import { AuthForm } from "@/auth/nextjs/components/auth-form";
+import { SignUPForm } from "@/auth/nextjs/components/SignUpForm";
 
 export default function SignUpPage() {
   return (
     <div className="h-full flex flex-col pt-24 px-4">
-      <AuthForm isLogin={false} />
+      <SignUPForm />
     </div>
   );
 }
