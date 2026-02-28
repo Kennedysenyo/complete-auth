@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { SignUpFormState, validateSignUpForm } from "../validations";
+import { useRouter } from "next/router";
 
 export const SignUPForm = () => {
+  const router = useRouter();
+
   const initialState: SignUpFormState = {
     errors: {},
     errorMessage: null,
@@ -14,6 +17,11 @@ export const SignUPForm = () => {
     validateSignUpForm,
     initialState,
   );
+  useEffect(() => {
+    if (state.success) {
+      router.replace("/");
+    }
+  }, [state.success, router]);
   return (
     <form
       action={formAction}

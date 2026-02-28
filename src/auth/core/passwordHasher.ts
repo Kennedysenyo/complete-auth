@@ -13,3 +13,22 @@ export const hashPassword = (
     });
   });
 };
+
+/**
+ * Returns True if password is equal to hashedPassword
+ */
+export const comparePasswords = async ({
+  password,
+  salt,
+  hashedPassword,
+}: {
+  password: string;
+  salt: string;
+  hashedPassword: string;
+}) => {
+  const hashedInputPassword = await hashPassword(password, salt);
+  return crypto.timingSafeEqual(
+    Buffer.from(hashedPassword, "hex"),
+    Buffer.from(hashedInputPassword, "hex"),
+  );
+};

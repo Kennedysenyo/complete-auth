@@ -1,24 +1,50 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { z } from "zod";
-import { signInSchema } from "./schema";
 import { db } from "@/db/db";
 import { UserTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { hashPassword } from "../core/passwordHasher";
-import { SignUpData } from "./validations";
+import { comparePasswords, hashPassword } from "../core/passwordHasher";
+import { SignInData, SignUpData } from "./validations";
 import { generateSalt } from "../core/saltGenerator";
 import { createUserSession } from "../core/session";
 import { cookies } from "next/headers";
 
-export async function SignIn(unsafeData: z.Infer<typeof signInSchema>) {
-  const { success, data } = signInSchema.safeParse(unsafeData);
-  if (!success) {
-    return "Unable to log in";
+export async function signIn(data: SignInData) {
+  try {
+    const [user] = await db
+      .select({
+        id: UserTable.id,
+        email: UserTable.email,
+        role: UserTable.role,
+        salt: UserTable.salt,
+        password: UserTable.password,
+      })
+      .from(UserTable)
+      .where(eq(UserTable.email, data.email))
+      .limit(1);
+
+    if (!user) return "Wrong user credentials";
+
+    const isCorrectPassword = await comparePasswords({
+      password: data.password,
+      salt: user.salt,
+      hashedPassword: user.password,
+    });
+
+    if (!isCorrectPassword) {
+      return "Wrong user credentials";
+    }
+
+    await createUserSession(user, await cookies());
+
+    return null;
+  } catch (error) {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    return error as string;
   }
-  // Do something
-  redirect("/");
 }
 
 export async function signUp(data: SignUpData): Promise<string | null> {

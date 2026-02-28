@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { SignInFormState, validateSignInForm } from "../validations";
+import { useRouter } from "next/navigation";
 
 export const SignInForm = () => {
+  const router = useRouter();
+
   const initialState: SignInFormState = {
     errors: {},
     errorMessage: null,
@@ -14,14 +17,20 @@ export const SignInForm = () => {
     validateSignInForm,
     initialState,
   );
-
+  useEffect(() => {
+    if (state.success) {
+      router.replace("/");
+    }
+  }, [state.success, router]);
   return (
     <form
       action={formAction}
       className="flex flex-col p-4 space-y-4 w-full md:max-w-[600px] mx-auto h-full rounded border border-gray-400"
     >
       <h2 className="text-center text-4xl">Sign In</h2>
-
+      <p className="text-red-600 my-2 text-center text-xs">
+        {state.errorMessage}
+      </p>
       <div className="flex flex-col space-y-2">
         <div>
           <label>

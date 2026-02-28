@@ -2,7 +2,7 @@
 
 import z from "zod";
 import { signInSchema, signUpSchema } from "./schema";
-import { signUp } from "./actions";
+import { signIn, signUp } from "./actions";
 
 export type SignUpData = z.infer<typeof signUpSchema>;
 export type SignInData = z.infer<typeof signInSchema>;
@@ -68,7 +68,10 @@ export const validateSignInForm = async (
     return { errors, errorMessage: null, success: false };
   }
 
-  console.log(result.data);
+  // console.log(result.data);
+
+  const errorMessage = await signIn(result.data);
+  if (errorMessage) return { errors: {}, errorMessage, success: false };
 
   return { errors: {}, errorMessage: null, success: true };
 };
