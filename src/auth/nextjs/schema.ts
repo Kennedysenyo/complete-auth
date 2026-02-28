@@ -18,5 +18,7 @@ export const signUpSchema = z.object({
 
 export const signInSchema = z.object({
   email: z.email(),
-  password: z.string().min(1),
+  password: z
+    .string()
+    .min(1, { error: (iss) => (!iss.input ? "Enter password" : "") }),
 });

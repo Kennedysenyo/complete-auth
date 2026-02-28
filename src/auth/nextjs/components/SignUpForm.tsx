@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { FormState, validateSignUpForm } from "../validations";
+import { SignUpFormState, validateSignUpForm } from "../validations";
 
 export const SignUPForm = () => {
-  const initialState: FormState = {
+  const initialState: SignUpFormState = {
     errors: {},
     errorMessage: null,
     success: false,
@@ -67,6 +67,7 @@ export const SignUPForm = () => {
         </div>
       </div>
       <button
+        aria-disabled={isPending}
         className="bg-gray-400 p-3 text-black text-xl border-none rounded cursor-pointer"
         type="submit"
       >
@@ -74,7 +75,10 @@ export const SignUPForm = () => {
       </button>
       <small className="text-center">
         <span>Already have an account?</span>
-        <Link className="text-blue-400" href="/sign-in">
+        <Link
+          className={`text-blue-400 ${isPending ? "pointer-events-none" : ""}`}
+          href="/sign-in"
+        >
           "Sign In
         </Link>
       </small>
