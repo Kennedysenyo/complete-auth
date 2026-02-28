@@ -2,8 +2,9 @@
 
 import z from "zod";
 import { signUpSchema } from "./schema";
+import { signUp } from "./actions";
 
-type SignUpData = z.infer<typeof signUpSchema>;
+export type SignUpData = z.infer<typeof signUpSchema>;
 
 type FormFieldErrorType = Partial<Record<keyof SignUpData, string>>;
 
@@ -29,6 +30,11 @@ export const validateSignUpForm = async (
     }
 
     return { errors, errorMessage: null, success: false };
+  }
+
+  const errorMessage = await signUp(result.data);
+  if (errorMessage) {
+    return { errors: {}, errorMessage, success: false };
   }
 
   return { errors: {}, errorMessage: null, success: true };

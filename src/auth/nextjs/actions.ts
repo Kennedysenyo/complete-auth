@@ -2,11 +2,13 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { signInSchema, signUpSchema } from "./schema";
+import { signInSchema } from "./schema";
 import { db } from "@/db/db";
 import { UserTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { hashPassword } from "../core/passwordHasher";
+import { SignUpData } from "./validations";
+import { generateSalt } from "../core/saltGenerator";
 
 export async function SignIn(unsafeData: z.Infer<typeof signInSchema>) {
   const { success, data } = signInSchema.safeParse(unsafeData);
@@ -17,22 +19,40 @@ export async function SignIn(unsafeData: z.Infer<typeof signInSchema>) {
   redirect("/");
 }
 
-export async function SignUp(unsafeData: z.infer<typeof signUpSchema>) {
-  const { success, data } = signUpSchema.safeParse(unsafeData);
+export async function signUp(data: SignUpData): Promise<string | null> {
+  try {
+    console.log(data);
+    const existingUser = await db.query.UserTable.findFirst({
+      where: eq(UserTable.email, data.email),
+    });
 
-  if (!success) return "Unable to sign up";
-  // Do Something
+    if (existingUser) return "Account already exists for this email";
 
-  const existingUser = await db.query.UserTable.findFirst({
-    where: eq(UserTable.email, data.email),
-  });
+    const salt = generateSalt();
 
-  if (existingUser !== null) return "Account already exists for this email";
+    const hashedPassword: string = await hashPassword(data.password, salt);
+    console.log(hashedPassword);
 
-  const hashedPassword = hashPassword(data.password, "salt");
-  console.log(hashPassword);
+    const user = await db
+      .insert(UserTable)
+      .values({
+        id: crypto.randomUUID(),
+        name: data.name,
+        email: data.email,
+        password: hashedPassword,
+        salt,
+      })
+      .returning({ id: UserTable.id });
 
-  redirect("/");
+    console.log(user);
+
+    return null;
+  } catch (error) {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    return error as string;
+  }
 }
 
 export async function LogOut() {

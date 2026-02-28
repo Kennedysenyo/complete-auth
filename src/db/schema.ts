@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { integer } from "drizzle-orm/gel-core";
+
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const userRoles = ["admin", "user"] as const;
