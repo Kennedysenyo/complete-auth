@@ -1,3 +1,4 @@
+import { SignOutButton } from "@/auth/nextjs/components/SignOutButton";
 import { getCurrentUser } from "@/auth/nextjs/currentUser";
 import Link from "next/link";
 
@@ -31,9 +32,7 @@ export default async function Home() {
             >
               Private Page
             </Link>
-            <button className="px-4 py-2 bg-red-600 text-white text-xl rounded">
-              Log Out
-            </button>
+            <SignOutButton />
           </div>
         </div>
       )}

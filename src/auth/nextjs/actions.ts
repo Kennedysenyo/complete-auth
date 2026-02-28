@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { comparePasswords, hashPassword } from "../core/passwordHasher";
 import { SignInData, SignUpData } from "./validations";
 import { generateSalt } from "../core/saltGenerator";
-import { createUserSession } from "../core/session";
+import { createUserSession, removeUserFromSession } from "../core/session";
 import { cookies } from "next/headers";
 
 export async function signIn(data: SignInData) {
@@ -88,7 +88,6 @@ export async function signUp(data: SignUpData): Promise<string | null> {
   }
 }
 
-export async function LogOut() {
-  // Do something
-  redirect("/");
+export async function signOut() {
+  await removeUserFromSession(await cookies());
 }
