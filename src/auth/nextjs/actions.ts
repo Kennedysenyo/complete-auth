@@ -9,6 +9,8 @@ import { eq } from "drizzle-orm";
 import { hashPassword } from "../core/passwordHasher";
 import { SignUpData } from "./validations";
 import { generateSalt } from "../core/saltGenerator";
+import { createUserSession } from "../core/session";
+import { cookies } from "next/headers";
 
 export async function SignIn(unsafeData: z.Infer<typeof signInSchema>) {
   const { success, data } = signInSchema.safeParse(unsafeData);
@@ -33,7 +35,7 @@ export async function signUp(data: SignUpData): Promise<string | null> {
     const hashedPassword: string = await hashPassword(data.password, salt);
     console.log(hashedPassword);
 
-    const user = await db
+    const [user] = await db
       .insert(UserTable)
       .values({
         id: crypto.randomUUID(),
@@ -42,9 +44,14 @@ export async function signUp(data: SignUpData): Promise<string | null> {
         password: hashedPassword,
         salt,
       })
-      .returning({ id: UserTable.id });
+      .returning({ id: UserTable.id, role: UserTable.role });
 
-    console.log(user);
+    // console.log(user);
+    if (user === null) return "Unable to create account";
+
+    const cookieStore = await cookies();
+
+    await createUserSession(user, cookieStore);
 
     return null;
   } catch (error) {

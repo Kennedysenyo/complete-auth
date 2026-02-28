@@ -1,8 +1,8 @@
+import { getCurrentUser } from "@/auth/nextjs/currentUser";
 import Link from "next/link";
 
-export default function Home() {
-  const fullUser = null;
-  // const fullUser = { id: "", name: "Ken", role: "user" };
+export default async function Home() {
+  const fullUser = await getCurrentUser();
   return (
     <div>
       {fullUser == null ? (
@@ -22,8 +22,8 @@ export default function Home() {
         </div>
       ) : (
         <div className="p-4 space-y-3 shadow-md">
-          <p>User: </p>
-          <span>Role: </span>
+          <p>User: {fullUser.id}</p>
+          <span>Role: {fullUser.role}</span>
           <div className="flex gap-4 items-center mt-4">
             <Link
               href="/private"
