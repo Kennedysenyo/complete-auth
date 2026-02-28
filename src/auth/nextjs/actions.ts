@@ -33,7 +33,7 @@ export async function signUp(data: SignUpData): Promise<string | null> {
     const salt = generateSalt();
 
     const hashedPassword: string = await hashPassword(data.password, salt);
-    console.log(hashedPassword);
+    // console.log(hashedPassword);
 
     const [user] = await db
       .insert(UserTable)

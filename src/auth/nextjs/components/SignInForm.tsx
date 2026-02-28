@@ -45,8 +45,8 @@ export const SignInForm = () => {
       >
         Sign In
       </button>
-      <small className="text-center">
-        <span>"Don't have an account</span>
+      <small className="flex items-center gap-2 justify-center">
+        <span>Don't have an account</span>
         <Link className="text-blue-400" href="/sign-up">
           Sign Up
         </Link>

@@ -7,7 +7,7 @@ export const hashPassword = (
   return new Promise((resolve, reject) => {
     crypto.scrypt(password.normalize(), salt, 64, (error, hashPassword) => {
       if (error) {
-        reject(error.message);
+        reject(error);
       }
       resolve(hashPassword.toString("hex"));
     });
